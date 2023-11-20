@@ -1,0 +1,33 @@
+- name: kubeadm reset
+  shell: kubeadm reset
+
+- name: Stop etcd
+  systemd:
+    name: etcd
+    state: stopped
+
+- name: Remove files
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - /etc/kubernetes/
+    - /opt/decort/
+    - /var/decort/
+    - /var/lib/etcd/
+    - /etc/systemd/system/kubelet.service.d/
+    - /etc/systemd/system/etcd.service
+
+- name: Systemd daemon-reload
+  systemd:
+    daemon_reload: yes
+
+- name: Install required packages for interacting ansible with docker
+  apt:
+    name:
+      - python3-requests
+
+- name: Stop container management
+  community.docker.docker_container:
+    name: management
+    state: absent

@@ -1,0 +1,4 @@
+- hosts: control
+  become: yes
+  roles:
+    - name: roles/basis-control-reset
